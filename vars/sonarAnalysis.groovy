@@ -1,28 +1,29 @@
 def call(boolean abortPipeline = false, int timeout = 5) {
-    timeout = timeout ?: 5 // Set default timeout to 5 minutes
+    timeout = timeout ?: 5 // Si no se proporciona un valor para timeout, se establece en 5 minutos por defecto
+    
+    // Obtener el nombre de la rama de Git desde la variable de entorno GIT_BRANCH
+    def gitBranch = env.GIT_BRANCH
     
     try {
-        // Execute SonarQube analysis or echo statement
-        sh 'echo "Executing code quality tests"'
+        // Simulando la ejecución de las pruebas de calidad de código
+        sh 'echo "Ejecución de las pruebas de calidad de código"'
         
-        // Wait for the result with timeout
+        // Esperar al resultado
         timeout(time: timeout, unit: 'MINUTES') {
-            // Evaluate SonarQube Quality Gate and decide whether to abort pipeline
-            // You can add your logic here to check SonarQube Quality Gate
-            // If Quality Gate fails and abortPipeline is true, abort the pipeline
-            // Otherwise, continue with the pipeline execution
-            // Example code:
-            // if (qualityGateFails && abortPipeline) {
-            //     error "SonarQube Quality Gate failed. Aborting the pipeline."
-            // }
+            // Lógica para evaluar el QualityGate de SonarQube
+            // Si el QualityGate no se pasa y abortPipeline es verdadero, abortar el pipeline
+            // De lo contrario, continuar con el pipeline
+            if (abortPipeline || gitBranch == 'master' || gitBranch.startsWith('hotfix')) {
+                error "QualityGate de SonarQube no se pasa. Abortando el pipeline."
+            }
         }
     } catch (Exception e) {
-        // Handle any exceptions that occur during SonarQube analysis
+        // Si hay alguna excepción, manejarla aquí
         echo "Error: ${e.message}"
-        
-        // If abortPipeline is true, abort the pipeline
+        // Si abortPipeline es verdadero, abortar el pipeline
         if (abortPipeline) {
-            error "Error during code quality tests execution. Aborting the pipeline."
+            error "Error durante la ejecución de las pruebas de calidad de código. Abortando el pipeline."
         }
     }
 }
+
