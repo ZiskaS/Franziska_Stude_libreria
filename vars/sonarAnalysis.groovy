@@ -1,25 +1,28 @@
 def call(boolean abortPipeline = false, int timeout = 5) {
-    timeout = timeout ?: 5 // Si no se proporciona un valor para timeout, se establece en 5 minutos por defecto
+    timeout = timeout ?: 5 // Set default timeout to 5 minutes
+    
     try {
-        // Simulando la ejecución de las pruebas de calidad de código
-        sh 'echo "Ejecución de las pruebas de calidad de código"'
-
-        // Esperar al resultado
+        // Execute SonarQube analysis or echo statement
+        sh 'echo "Executing code quality tests"'
+        
+        // Wait for the result with timeout
         timeout(time: timeout, unit: 'MINUTES') {
-            // Lógica para evaluar el QualityGate de SonarQube
-            // Si el QualityGate no se pasa y abortPipeline es verdadero, abortar el pipeline
-            // De lo contrario, continuar con el pipeline
-            // Código de ejemplo:
+            // Evaluate SonarQube Quality Gate and decide whether to abort pipeline
+            // You can add your logic here to check SonarQube Quality Gate
+            // If Quality Gate fails and abortPipeline is true, abort the pipeline
+            // Otherwise, continue with the pipeline execution
+            // Example code:
             // if (qualityGateFails && abortPipeline) {
-            //     error "QualityGate de SonarQube no se pasa. Abortando el pipeline."
+            //     error "SonarQube Quality Gate failed. Aborting the pipeline."
             // }
         }
     } catch (Exception e) {
-        // Si hay alguna excepción, manejarla aquí
+        // Handle any exceptions that occur during SonarQube analysis
         echo "Error: ${e.message}"
-        // Si abortPipeline es verdadero, abortar el pipeline
+        
+        // If abortPipeline is true, abort the pipeline
         if (abortPipeline) {
-            error "Error durante la ejecución de las pruebas de calidad de código. Abortando el pipeline."
+            error "Error during code quality tests execution. Aborting the pipeline."
         }
     }
 }
